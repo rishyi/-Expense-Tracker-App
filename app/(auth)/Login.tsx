@@ -8,22 +8,36 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+  ScrollView
 } from "react-native"
 
 const Login = () => {
   const router = useRouter()
   const [email, setEmail] = useState<string>("")
-  const [password, setPasword] = useState<string>("")
-  const [isLodingReg, setIsLoadingReg] = useState<boolean>(false)
+  const [password, setPassword] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false)
+  const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false)
 
   const handleLogin = async () => {
-    // if(!email){
-
-    // }
-    //
-    if (isLodingReg) return
-    setIsLoadingReg(true)
+    if (isLoading) return
+    
+    // Simple validation
+    if (!email) {
+      Alert.alert("Error", "Please enter your email")
+      return
+    }
+    
+    if (!password) {
+      Alert.alert("Error", "Please enter your password")
+      return
+    }
+    
+    setIsLoading(true)
     await login(email, password)
       .then((res) => {
         console.log(res)
@@ -31,50 +45,112 @@ const Login = () => {
       })
       .catch((err) => {
         console.error(err)
-        Alert.alert("Login failed", "Somthing went wrong")
-        // import { Alert } from "react-native"
+        Alert.alert("Login failed", "Invalid email or password")
       })
       .finally(() => {
-        setIsLoadingReg(false)
+        setIsLoading(false)
       })
   }
 
   return (
-    <View className="flex-1 bg-gray-100 justify-center p-4">
-      <Text className="text-2xl font-bold mb-6 text-blue-600 text-center">
-        Login to Task Manager
-      </Text>
-      <TextInput
-        placeholder="Email"
-        className="bg-surface border border-gray-300 rounded px-4 py-3 mb-4 text-gray-900"
-        placeholderTextColor="#9CA3AF"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Password"
-        className="bg-surface border border-gray-300 rounded px-4 py-3 mb-4 text-gray-900"
-        placeholderTextColor="#9CA3AF"
-        secureTextEntry
-        value={password}
-        onChangeText={setPasword}
-      />
-      <TouchableOpacity
-        className="bg-blue-500 p-4 rounded mt-2"
-        onPress={handleLogin}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 bg-white"
+    >
+      <ScrollView 
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
-        {isLodingReg ? (
-          <ActivityIndicator color="#fff" size="large" />
-        ) : (
-          <Text className="text-center text-2xl text-white">Login</Text>
-        )}
-      </TouchableOpacity>
-      <Pressable onPress={() => router.push("./register")} className="mt-4">
-        <Text className="text-center text-blue-500 text-xl">
-          Don't have an account? Register
-        </Text>
-      </Pressable>
-    </View>
+        <View className="flex-1 justify-center px-6 py-12">
+          {/* Header with Logo */}
+          <View className="items-center mb-10">
+            <View className="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg shadow-blue-600/30">
+              <Text className="text-white text-3xl font-bold">✓</Text>
+            </View>
+            <Text className="text-3xl font-bold text-gray-800">Welcome Back</Text>
+            <Text className="text-gray-500 mt-2">Sign in to continue</Text>
+          </View>
+
+          {/* Form */}
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-gray-700 mb-2">Email</Text>
+            <TextInput
+              placeholder="Enter your email"
+              className={`bg-gray-50 rounded-xl px-5 py-4 mb-5 text-gray-800 border ${
+                isEmailFocused ? 'border-blue-500' : 'border-gray-200'
+              }`}
+              placeholderTextColor="#9CA3AF"
+              value={email}
+              onChangeText={setEmail}
+              onFocus={() => setIsEmailFocused(true)}
+              onBlur={() => setIsEmailFocused(false)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            
+            <Text className="text-sm font-medium text-gray-700 mb-2">Password</Text>
+            <TextInput
+              placeholder="Enter your password"
+              className={`bg-gray-50 rounded-xl px-5 py-4 mb-2 text-gray-800 border ${
+                isPasswordFocused ? 'border-blue-500' : 'border-gray-200'
+              }`}
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
+            />
+            
+            <TouchableOpacity
+              className={`bg-blue-600 p-4 rounded-xl shadow-lg shadow-blue-600/30 ${
+                isLoading ? "opacity-80" : ""
+              }`}
+              onPress={handleLogin}
+              activeOpacity={0.9}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-center text-lg font-semibold text-white">Login</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          
+          {/* Divider */}
+          <View className="flex-row items-center my-8">
+            <View className="flex-1 h-px bg-gray-200" />
+            <Text className="mx-4 text-gray-500">Or continue with</Text>
+            <View className="flex-1 h-px bg-gray-200" />
+          </View>
+          
+          {/* Social Login Options */}
+          <View className="flex-row justify-center space-x-4">
+            <TouchableOpacity 
+              className="p-3 bg-gray-100 rounded-xl flex-1 items-center"
+              onPress={() => Alert.alert("Google Login", "Feature coming soon!")}
+            >
+              <Text className="text-gray-700 font-medium">Google</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className="p-3 bg-gray-100 rounded-xl flex-1 items-center"
+              onPress={() => Alert.alert("Apple Login", "Feature coming soon!")}
+            >
+              <Text className="text-gray-700 font-medium">Apple</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Sign up redirect */}
+          <View className="flex-row justify-center mt-8">
+            <Text className="text-gray-600">Don't have an account? </Text>
+            <Pressable onPress={() => router.push("/register")}>
+              <Text className="text-blue-600 font-semibold">Register</Text>
+            </Pressable>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
