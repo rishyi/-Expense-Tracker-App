@@ -5,13 +5,7 @@ import { AuthProvider } from "@/context/AuthContext"
 import { LoaderProvider } from "@/context/LoaderContext"
 
 const RootLayout = () => {
-  return (
-    <LoaderProvider>
-      <AuthProvider>
-        <Slot />
-      </AuthProvider>
-    </LoaderProvider>
-  )
+  return <Stack screenOptions={{ headerShown: false }}></Stack>
 }
 
 export default RootLayout
