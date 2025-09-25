@@ -1,4 +1,4 @@
-import { View, Text } from "react-native"
+
 import React, {
   createContext,
   ReactNode,
@@ -6,35 +6,84 @@ import React, {
   useEffect,
   useState
 } from "react"
-import { onAuthStateChanged, User } from "firebase/auth"
-import { auth } from "@/firebase"
+import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, User } from "firebase/auth"
+import { auth, db } from "@/config/firebase"
+import { AuthContextType, UserType } from "@/types"
+import { doc, getDoc, setDoc } from "firebase/firestore"
 
-const AuthContext = createContext<{ user: User | null; loading: boolean }>({
-  user: null,
-  loading: true
-})
+const AuthContext = createContext<AuthContextType | null>(null)
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<UserType>(null);
 
-  useEffect(() => {
-    const unsubcribe = onAuthStateChanged(auth, (user) => {
-      setUser(user ?? null)
-      setLoading(false)
-    })
+  const login = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      return { success: true };
 
-    return unsubcribe
-  }, [])
+    } catch (error: any) {
+      let msg = error.message;
+      return { success: false, msg };
+    }
+  };
+  const register = async (email: string, password: string, name: string) => {
+    try {
+      let response = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", response?.user?.uid), {
+        name,
+        email,
+        uid: response?.user?.uid
+      });
+      return { success: true };
+
+    } catch (error: any) {
+      let msg = error.message;
+      return { success: false, msg };
+    }
+  };
+
+  const updateUserData = async (uid: string) => {
+    try {
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const userData: UserType = {
+          uid: data.uid,
+          name: data.name || null,
+          email: data.email || null,
+          image: data.image || null
+        };
+        setUser({ ...userData });
+      }
+    } catch (error: any) {
+      let msg = error.message;
+      // return { success: false, msg };
+      console.log("Error updating user data:", msg);
+      
+    }
+  };
+
+  const contextValue: AuthContextType = {
+    user,
+    setUser,
+    login,
+    register,
+    updateUserData
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-export const useAuth = () => {
-  return useContext(AuthContext)
-}
-// export { AuthProvider, useAuth }
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

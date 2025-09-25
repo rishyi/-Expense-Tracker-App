@@ -7,7 +7,7 @@ import { verticalScale } from '@/utils/styling'
 const Typo = ({
     size,
     color = colors.text,
-    fontWeight = "400",
+    fontWeight = "600",
     children,
     style,
     textProps = {},

@@ -8,6 +8,8 @@ import Typo from '@/components/typo'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 import { useRouter } from 'expo-router'
+import { register } from '@/services/authService'
+import { useAuth } from '@/context/AuthContext'
 
 const Register = () => {
 
@@ -16,17 +18,24 @@ const Register = () => {
   const passwordRef = useRef("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { register: registerUser } = useAuth();
 
   const handleSubmit = async () => {
     if(!emailRef.current || !passwordRef.current || !nameRef.current) {
       Alert.alert("Sign Up", "Please fill all the fields");
       return;
     }
-    console.log("email: ", emailRef.current);
-    console.log("password: ", passwordRef.current);
-    console.log("name: ", nameRef.current);
-    console.log("submit");
-    
+    setIsLoading(true);
+    const res = await registerUser(
+      emailRef.current,
+      passwordRef.current,
+      nameRef.current
+    );
+    setIsLoading(false);
+    console.log("Register response:", res);
+    if(!res.success) {
+      Alert.alert("Sign Up", res.msg );
+    }
   };
 
   return (
