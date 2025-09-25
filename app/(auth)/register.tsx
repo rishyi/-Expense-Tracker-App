@@ -1,83 +1,123 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Pressable,
-  Alert,
-  ActivityIndicator
-} from "react-native"
-import React, { useState } from "react"
-import { useRouter } from "expo-router"
-import { register } from "@/services/authService"
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import ScreenWrapper from '@/components/ScreenWrapper'
+import { colors, spacingX, spacingY } from '@/constants/theme'
+import { verticalScale } from '@/utils/styling'
+import BackButton from '@/components/BackButton'
+import Typo from '@/components/typo'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import { useRouter } from 'expo-router'
 
 const Register = () => {
-  const router = useRouter()
-  const [email, setEmail] = useState<string>("")
-  const [password, setPasword] = useState<string>("")
-  const [isLodingReg, setIsLoadingReg] = useState<boolean>(false)
 
-  const handleRegister = async () => {
-    // if(!email){
+  const emailRef = useRef("");
+  const nameRef = useRef("");
+  const passwordRef = useRef("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-    // }
-    // 
-    if (isLodingReg) return
-    setIsLoadingReg(true)
-    await register(email, password)
-      .then((res) => {
-        console.log(res)
-        router.back()
-      })
-      .catch((err) => {
-        console.error(err)
-        Alert.alert("Registration fail", "Somthing went wrong")
-        // import { Alert } from "react-native"
-      })
-      .finally(() => {
-        setIsLoadingReg(false)
-      })
-  }
+  const handleSubmit = async () => {
+    if(!emailRef.current || !passwordRef.current || !nameRef.current) {
+      Alert.alert("Sign Up", "Please fill all the fields");
+      return;
+    }
+    console.log("email: ", emailRef.current);
+    console.log("password: ", passwordRef.current);
+    console.log("name: ", nameRef.current);
+    console.log("submit");
+    
+  };
 
   return (
-    <View className="flex-1 bg-gray-100 justify-center p-4">
-      <Text className="text-2xl font-bold mb-6 text-blue-600 text-center">
-        Register
-      </Text>
-      <TextInput
-        placeholder="Email"
-        className="bg-surface border border-gray-300 rounded px-4 py-3 mb-4 text-gray-900"
-        placeholderTextColor="#9CA3AF"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Password"
-        className="bg-surface border border-gray-300 rounded px-4 py-3 mb-4 text-gray-900"
-        placeholderTextColor="#9CA3AF"
-        secureTextEntry
-        value={password}
-        onChangeText={setPasword}
-      />
-      <TouchableOpacity
-        className="bg-green-600 p-4 rounded mt-2"
-        onPress={handleRegister}
-      >
-        {isLodingReg ? (
-          <ActivityIndicator color="#fff" size="large" />
-        ) : (
-          <Text className="text-center text-2xl text-white">Register</Text>
-        )}
-      </TouchableOpacity>
-      <Pressable onPress={() => router.back()}>
-        <Text className="text-center text-blue-500 text-xl">
-          Alredy have an account? Login
-        </Text>
-      </Pressable>
-    </View>
+    <ScreenWrapper>
+      <View style={styles.container}>
+        <BackButton iconSize={28} />
+
+        <View style={{ gap: 5, marginTop: spacingY._20 }}>
+          <Typo size={30} fontWeight="800">
+            Let's
+          </Typo>
+          <Typo size={30} fontWeight="600">
+            Get Started
+          </Typo>
+        </View>
+
+        {/* form */}
+
+        <View style={styles.form}>
+          <Typo size={14} color={colors.textLighter}>
+            Create an account to get started your expenses
+          </Typo>
+
+          <Input 
+            placeholder='Enter your name' 
+            onChangeText={(value) => nameRef.current = value}
+          />
+          <Input 
+            placeholder='Enter your email' 
+            onChangeText={(value) => emailRef.current = value}
+          />
+          <Input 
+            placeholder='Enter your password' 
+            secureTextEntry
+            onChangeText={(value) => passwordRef.current = value}
+          />
+
+        </View>
+
+          <Button loading={isLoading} onPress={handleSubmit} >
+            <Typo size={18} color={colors.black} fontWeight="800">
+              Sign Up
+            </Typo>
+          </Button>
+
+        {/* footer */}
+        
+        <View style={styles.footer}>
+          <Typo size={15}> Already have an account? </Typo>
+          <Pressable onPress={() => router.navigate('/(auth)/login')} >
+            <Typo fontWeight="600" size={15} color={colors.primary}>
+              Login
+            </Typo>
+          </Pressable>
+        </View> 
+
+      </View>
+    </ScreenWrapper>
   )
 }
 
 export default Register
 
-
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        gap: spacingY._30,
+        paddingHorizontal: spacingX._20,
+    },
+    welcomeText: {
+        fontSize: verticalScale(20),
+        fontWeight: 'bold',
+        color: colors.text,
+    },
+    form: {
+        gap: spacingY._20,
+    },
+    forgotPassword: {
+        textAlign: 'right',
+        fontWeight: '500',
+        color: colors.text,
+    },  
+    footer: {
+       flexDirection: 'row',
+       justifyContent: 'center',
+       alignItems: 'center',
+       gap: 5,
+    },
+    footerText: {
+        textAlign: 'center',
+        color: colors.text,
+        fontSize: verticalScale(15),
+    },
+});

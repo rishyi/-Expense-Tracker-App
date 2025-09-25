@@ -4,7 +4,7 @@ import { colors } from '@/constants/theme'
 import { TypoProps } from '@/types'
 import { verticalScale } from '@/utils/styling'
 
-const typo = ({
+const Typo = ({
     size,
     color = colors.text,
     fontWeight = "400",
@@ -27,6 +27,6 @@ const typo = ({
   )
 }
 
-export default typo
+export default Typo
 
 const styles = StyleSheet.create({})

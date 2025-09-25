@@ -1,11 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
-import Typo from '@/components/typo'
 import { colors, spacingX, spacingY } from '@/constants/theme'
 import { verticalScale } from '@/utils/styling'
-import Button from '@/components/button'
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated'
+import { router } from 'expo-router'
+import Typo from '@/components/typo'
+import Button from '@/components/Button'
 
 const welcome = () => {
   return (
@@ -13,7 +14,7 @@ const welcome = () => {
         <View style={styles.container}>
             {/* loggin bytton & Image */}
             <View>
-                <TouchableOpacity style={styles.loginButton} >
+                <TouchableOpacity onPress={() => router.navigate('/(auth)/login')} style={styles.loginButton} >
                     <Typo fontWeight="500"> Sign In </Typo>
                 </TouchableOpacity>
 
@@ -46,7 +47,7 @@ const welcome = () => {
                 </Animated.View>
 
                 <Animated.View entering={FadeInDown.duration(1000).delay(200).springify().damping(22)} style={styles.buttonContainer}> 
-                    <Button>
+                    <Button onPress={() => router.push('/(auth)/register')}>
                         <Typo size={16} color={colors.neutral900} fontWeight="500">
                             Get Started
                         </Typo>

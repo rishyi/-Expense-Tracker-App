@@ -1,157 +1,119 @@
-import { login } from "@/services/authService"
-import { useRouter } from "expo-router"
-import { useState } from "react"
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  ScrollView
-} from "react-native"
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import ScreenWrapper from '@/components/ScreenWrapper'
+import { colors, spacingX, spacingY } from '@/constants/theme'
+import { verticalScale } from '@/utils/styling'
+import BackButton from '@/components/BackButton'
+import Typo from '@/components/typo'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
+import { useRouter } from 'expo-router'
 
 const Login = () => {
-  const router = useRouter()
-  const [email, setEmail] = useState<string>("")
-  const [password, setPassword] = useState<string>("")
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false)
-  const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false)
 
-  const handleLogin = async () => {
-    if (isLoading) return
-    
-    // Simple validation
-    if (!email) {
-      Alert.alert("Error", "Please enter your email")
-      return
+  const emailRef = useRef("");
+  const passwordRef = useRef("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async () => {
+    if(!emailRef.current || !passwordRef.current) {
+      Alert.alert("Login", "Please fill all the fields");
+      return;
     }
+    console.log("email: ", emailRef.current);
+    console.log("password: ", passwordRef.current);
+    console.log("submit");
     
-    if (!password) {
-      Alert.alert("Error", "Please enter your password")
-      return
-    }
-    
-    setIsLoading(true)
-    await login(email, password)
-      .then((res) => {
-        console.log(res)
-        router.push("/")
-      })
-      .catch((err) => {
-        console.error(err)
-        Alert.alert("Login failed", "Invalid email or password")
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }
+  };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white"
-    >
-      <ScrollView 
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="flex-1 justify-center px-6 py-12">
-          {/* Header with Logo */}
-          <View className="items-center mb-10">
-            <View className="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg shadow-blue-600/30">
-              <Text className="text-white text-3xl font-bold">✓</Text>
-            </View>
-            <Text className="text-3xl font-bold text-gray-800">Welcome Back</Text>
-            <Text className="text-gray-500 mt-2">Sign in to continue</Text>
-          </View>
+    <ScreenWrapper>
+      <View style={styles.container}>
+        <BackButton iconSize={28} />
 
-          {/* Form */}
-          <View className="mb-6">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Email</Text>
-            <TextInput
-              placeholder="Enter your email"
-              className={`bg-gray-50 rounded-xl px-5 py-4 mb-5 text-gray-800 border ${
-                isEmailFocused ? 'border-blue-500' : 'border-gray-200'
-              }`}
-              placeholderTextColor="#9CA3AF"
-              value={email}
-              onChangeText={setEmail}
-              onFocus={() => setIsEmailFocused(true)}
-              onBlur={() => setIsEmailFocused(false)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            
-            <Text className="text-sm font-medium text-gray-700 mb-2">Password</Text>
-            <TextInput
-              placeholder="Enter your password"
-              className={`bg-gray-50 rounded-xl px-5 py-4 mb-2 text-gray-800 border ${
-                isPasswordFocused ? 'border-blue-500' : 'border-gray-200'
-              }`}
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              onFocus={() => setIsPasswordFocused(true)}
-              onBlur={() => setIsPasswordFocused(false)}
-            />
-            
-            <TouchableOpacity
-              className={`bg-blue-600 p-4 rounded-xl shadow-lg shadow-blue-600/30 ${
-                isLoading ? "opacity-80" : ""
-              }`}
-              onPress={handleLogin}
-              activeOpacity={0.9}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text className="text-center text-lg font-semibold text-white">Login</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          
-          {/* Divider */}
-          <View className="flex-row items-center my-8">
-            <View className="flex-1 h-px bg-gray-200" />
-            <Text className="mx-4 text-gray-500">Or continue with</Text>
-            <View className="flex-1 h-px bg-gray-200" />
-          </View>
-          
-          {/* Social Login Options */}
-          <View className="flex-row justify-center space-x-4">
-            <TouchableOpacity 
-              className="p-3 bg-gray-100 rounded-xl flex-1 items-center"
-              onPress={() => Alert.alert("Google Login", "Feature coming soon!")}
-            >
-              <Text className="text-gray-700 font-medium">Google</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              className="p-3 bg-gray-100 rounded-xl flex-1 items-center"
-              onPress={() => Alert.alert("Apple Login", "Feature coming soon!")}
-            >
-              <Text className="text-gray-700 font-medium">Apple</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Sign up redirect */}
-          <View className="flex-row justify-center mt-8">
-            <Text className="text-gray-600">Don't have an account? </Text>
-            <Pressable onPress={() => router.push("/register")}>
-              <Text className="text-blue-600 font-semibold">Register</Text>
-            </Pressable>
-          </View>
+        <View style={{ gap: 5, marginTop: spacingY._20 }}>
+          <Typo size={30} fontWeight="800">
+            Hey,
+          </Typo>
+          <Typo size={30} fontWeight="600">
+            Welcome Back
+          </Typo>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+        {/* form */}
+
+        <View style={styles.form}>
+          <Typo size={16} color={colors.textLighter}>
+            Login now to track all yopur expenses
+          </Typo>
+          <Input 
+            placeholder='Enter your email' 
+            onChangeText={(value) => emailRef.current = value}
+          />
+          <Input 
+            placeholder='Enter your password' 
+            secureTextEntry
+            onChangeText={(value) => passwordRef.current = value}
+          />
+        </View>
+
+          <Typo size={14} color={colors.textLighter} style={{alignSelf: 'flex-end'}} >
+            Forgot Password?
+          </Typo>
+
+          <Button loading={isLoading} onPress={handleSubmit} >
+            <Typo size={18} color={colors.black} fontWeight="800">
+              Login
+            </Typo>
+          </Button>
+
+        {/* footer */}
+        
+        <View style={styles.footer}>
+          <Typo size={15}> Don't have an account? </Typo>
+          <Pressable onPress={() => router.navigate('/(auth)/register')} >
+            <Typo fontWeight="600" size={15} color={colors.primary}>
+              Sign Up
+            </Typo>
+          </Pressable>
+        </View> 
+
+      </View>
+    </ScreenWrapper>
   )
 }
 
 export default Login
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        gap: spacingY._30,
+        paddingHorizontal: spacingX._20,
+    },
+    welcomeText: {
+        fontSize: verticalScale(20),
+        fontWeight: 'bold',
+        color: colors.text,
+    },
+    form: {
+        gap: spacingY._20,
+    },
+    forgotPassword: {
+        textAlign: 'right',
+        fontWeight: '500',
+        color: colors.text,
+    },  
+    footer: {
+       flexDirection: 'row',
+       justifyContent: 'center',
+       alignItems: 'center',
+       gap: 5,
+    },
+    footerText: {
+        textAlign: 'center',
+        color: colors.text,
+        fontSize: verticalScale(15),
+    },
+});
