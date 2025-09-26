@@ -6,10 +6,10 @@ import CustomTabs from '@/components/CustomTabs'
 const _layout = () => {
   return (
   <Tabs tabBar={CustomTabs} screenOptions={{headerShown: false}}>
-    <Tabs.Screen name="index" />
-    <Tabs.Screen name="statistics" />
-    <Tabs.Screen name="wallet" />
-    <Tabs.Screen name="profile" />
+    <Tabs.Screen name="Home"/>
+    <Tabs.Screen name="Statistics"/>
+    <Tabs.Screen name="Wallet"/>
+    <Tabs.Screen name="Profile"/>
   </Tabs>
   );
 };

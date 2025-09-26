@@ -18,7 +18,7 @@ export default function CustomTabs({ state, descriptors, navigation } : BottomTa
             />
         ),
 
-        statistics: (useIsFocused: boolean) => (
+        Statistics: (useIsFocused: boolean) => (
             <Icons.ChartBar 
             size={verticalScale(30)}
             weight={useIsFocused ? "fill" : "regular"}
@@ -51,8 +51,8 @@ export default function CustomTabs({ state, descriptors, navigation } : BottomTa
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-              ? options.title
-              : route.name;
+            ? options.title
+            : route.name;
 
         const isFocused = state.index === index;
 
@@ -86,6 +86,10 @@ export default function CustomTabs({ state, descriptors, navigation } : BottomTa
             onLongPress={onLongPress}
             style={styles.tabBarItem}
           >
+           <Text style = {{color: isFocused ? colors.primary : colors.neutral350}}>
+             {label}
+           </Text>
+
            {
             tabbarIcons[route.name] && tabbarIcons[route.name](isFocused)
            }
@@ -100,7 +104,7 @@ const styles = StyleSheet.create({
     tabBar: {
         flexDirection: 'row',
         width: '100%', 
-        height: Platform.OS === 'ios' ? verticalScale(75) : verticalScale(55),
+        height: Platform.OS === 'ios' ? verticalScale(73) : verticalScale(55),
         backgroundColor: colors.neutral800,
         justifyContent: 'space-around',
         alignItems: 'center',
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     tabBarItem: {
-        marginBottom: Platform.OS === 'ios' ? spacingY._10 : 5,
+        marginBottom: Platform.OS === 'ios' ? spacingY._10 : spacingY._5,
         justifyContent: 'center',
         alignItems: 'center',
     },
