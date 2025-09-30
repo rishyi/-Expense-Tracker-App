@@ -8,7 +8,7 @@ export const updateUser = async (
     updatedData: UserDataType
 ): Promise<ResponseType> => {
     try{
-        const userRef = doc(db, "user", uid)
+        const userRef = doc(db, "users", uid)
         await updateDoc(userRef, updatedData)
 
         return {success: true, msg: "update successfully"}

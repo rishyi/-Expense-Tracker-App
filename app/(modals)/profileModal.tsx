@@ -99,7 +99,10 @@ const profileModal = () => {
                 <Typo color={colors.neutral200}>
                     Name
                 </Typo>
-                <Input placeholder="Name" value={userData.name} onChangeText={(value) => setUserData({...userData, name: value})} />
+                <Input 
+                placeholder="Name" 
+                value={userData.name} 
+                onChangeText={(value) => setUserData({...userData, name: value})} />
             </View>
         </ScrollView>
       </View>
