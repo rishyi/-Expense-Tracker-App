@@ -101,5 +101,4 @@ const styles = StyleSheet.create({
         gap: spacingY._10 
     }
 
-
 })

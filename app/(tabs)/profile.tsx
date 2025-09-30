@@ -13,9 +13,11 @@ import { accountOptionType } from '@/types'
 import * as Icons from 'phosphor-react-native'
 import index from '..'
 import Animated, { FadeInDown } from 'react-native-reanimated'
+import { useRouter } from 'expo-router'
 
 const Profile = () => {
   const {user} = useAuth();
+  const router = useRouter();
 
   const accountOptions: accountOptionType[] = [
     {
@@ -23,6 +25,7 @@ const Profile = () => {
       icon: <Icons.User size={26} color={colors.white} weight='fill' /> ,
       bgColor: "#003f91f6",
       routeName: '/(modals)/profileModal'
+      
     },
 
     {
@@ -45,7 +48,12 @@ const Profile = () => {
       bgColor: "#f00b0bff", 
       // routeName: '/(modals)/profileModal'
     }
-  ]
+  ];
+
+  const handlePress = async(item: accountOptionType) => {
+    if(item.routeName) router.push(item.routeName);
+  }
+
   return (
     <ScreenWrapper>
       <View style={styles.container}>
@@ -77,7 +85,7 @@ const Profile = () => {
                 <Animated.View 
                 key={index.toString()}
                 entering={FadeInDown.delay(index*50).springify().damping(14)} style={styles.listItem}>
-                  <TouchableOpacity style={styles.flexRow}>
+                  <TouchableOpacity style={styles.flexRow} onPress={() => handlePress(item)}>
                     {/* icon */}
                     <View style = {[styles.listIcon,{backgroundColor: item?.bgColor,}]}>
                       {item.icon && item.icon}
