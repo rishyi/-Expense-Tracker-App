@@ -167,7 +167,6 @@ export type WalletType = {
   amount?: number;
   totalIncome?: number;
   totalExpenses?: number;
-  image: any;
   uid?: string;
   created?: Date;
 };
