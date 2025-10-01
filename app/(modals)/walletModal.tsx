@@ -1,15 +1,27 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import ModalWrapper from '@/components/ModalWrapper'
-import Typo from '@/components/typo'
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { colors, spacingX, spacingY } from '@/constants/theme'
 import { scale, verticalScale } from '@/utils/styling'
-import { WalletType } from '@/types'
-import { useRouter } from 'expo-router'
+import ScreenWrapper from '@/components/ScreenWrapper'
+import ModalWrapper from '@/components/ModalWrapper'
+import Header from '@/components/Header'
+import BackButton from '@/components/BackButton'
+import { Image } from 'expo-image'
+import { getProfileImage } from '@/services/imageService'
+import * as Icons from "phosphor-react-native";
+import Typo from '@/components/typo'
+import Input from '@/components/Input'
+import { UserDataType, WalletType } from '@/types'
 import * as ImagePicker from "expo-image-picker"
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import Button from '@/components/Button'
+import { useAuth } from '@/context/AuthContext'
+import { updateUser } from '@/services/userService'
+import { createdrUpdateWallet } from '@/services/walletService'
 
 const walletModal = () => {
 
+    const {user, updateUserData} = useAuth()
    const [wallet, setWallet] = useState<WalletType>({
     name:  "",
     image: null,
@@ -17,32 +29,78 @@ const walletModal = () => {
    const [loading, setLoading] = useState(false);
    const router = useRouter();
 
-   const onPickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        aspect : [4,3],
-        quality: 0.5,
-    });
-
-    if(!result.canceled) {
-        
-    };
-   };
-
+   const oldWallet: {name: string, image: string, id: string} = useLocalSearchParams();
+   
+   useEffect(() => {
+    if(oldWallet?.id){
+        setWallet({
+            name: oldWallet?.name,
+            image: oldWallet?.image
+        })
+    }
+   }, [])
+   
    const onSubmit = async () => {
     let {name , image} = wallet;
     if(!name.trim()){
-        Alert.alert("User", "please fill all the blanks");
+        Alert.alert("Wallet", "please fill all the blanks");
         return;
     }
+    
+    const data: WalletType = {
+        name,
+        image,
+        uid: user?.uid,
+    };
+
+    if(oldWallet?.id) data.id = oldWallet?.id
+    
 
     setLoading(true);
+    const res = await createdrUpdateWallet(data);
+    setLoading(false)
+    console.log("goo", res);
+    if(res.success){
+        router.back();
+    }else{
+        Alert.alert("Wallet", res.msg)
+    }
    }
-   
+  return (
+    <ModalWrapper>
+      <View style={styles.container}>
+        <Header 
+            title={oldWallet?.id ? "Update Wallet" : "New Wallet" }
+            leftIcon={<BackButton/>} 
+            style={{marginBottom: spacingY._10}} 
+        /> 
 
-}
+        {/* form */}
+        <ScrollView contentContainerStyle={styles.form}>
 
-export default walletModal
+            <View style={styles.inputContainer}>
+                <Typo color={colors.neutral200}>
+                    Wallet Name
+                </Typo>
+                <Input 
+                placeholder="Salary" 
+                value={wallet.name} 
+                onChangeText={(value) => setWallet({...wallet, name: value})} />
+            </View>
+        </ScrollView>
+      </View>
+      <View style={styles.footer}>
+        <Button onPress={onSubmit} loading={loading} style={{flex: 1}}>
+            <Typo color={colors.black} fontWeight={"700"}>
+               {oldWallet?.id ? "Update Wallet" : "Add Wallet"}
+            </Typo>
+        </Button>
+      </View>
+    </ModalWrapper>
+  );
+};
+
+export default walletModal;
 
 const styles = StyleSheet.create({
     container: {

@@ -1,15 +1,16 @@
 
 import { View, StyleSheet, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'expo-router'
 
 
 const index = () => {
-    // const router = useRouter()
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         router.replace('/(auth)/welcome')
-    //     }, 2000)
-    // }, [])
+    const router = useRouter()
+    useEffect(() => {
+        setTimeout(() => {
+            router.replace('/(auth)/welcome')
+        }, 2000)
+    }, [])
 
     return (
         <View style={styles.container}>
