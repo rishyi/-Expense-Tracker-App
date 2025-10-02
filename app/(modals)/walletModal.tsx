@@ -1,6 +1,6 @@
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { colors, spacingX, spacingY } from '@/constants/theme'
+import { colors, radius, spacingX, spacingY } from '@/constants/theme'
 import { scale, verticalScale } from '@/utils/styling'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import ModalWrapper from '@/components/ModalWrapper'
@@ -138,7 +138,6 @@ export default walletModal;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "space-between",
         paddingHorizontal: spacingX._20
     },
 
@@ -155,8 +154,9 @@ const styles = StyleSheet.create({
     },
 
     form: {
-        gap: spacingY._30,
-        marginTop: spacingY._15,
+        gap: spacingY._20,
+        paddingVertical: spacingY._15,
+        paddingBottom: spacingY._40
     },
 
     avatarContainer: {

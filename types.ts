@@ -75,7 +75,6 @@ export type TransactionType = {
   category?: string;
   date: Date | Timestamp | string;
   description?: string;
-  image?: any;
   uid?: string;
   walletId: string;
 };
