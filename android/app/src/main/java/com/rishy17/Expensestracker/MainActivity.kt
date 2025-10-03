@@ -1,4 +1,4 @@
-package com.rishy17.Expensestracker
+package com.rishy17.expensestracker
 
 import android.os.Build
 import android.os.Bundle

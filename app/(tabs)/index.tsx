@@ -53,7 +53,7 @@ const Home = () => {
           </View>
 
           <TransactionList 
-          data={[1, 2, 3, 4, 5, 6 ]} 
+          data={[]} 
           loading={false} 
           emptyListMessage="No transactions found"
           title= "Recent Transactions"
