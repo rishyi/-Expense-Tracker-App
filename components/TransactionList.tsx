@@ -69,7 +69,7 @@ const TransactionItem = ({
     handleClick
 }: TransactionItemProps) => {
 
-    let category = expenseCategories["utilities"];
+    let category = expenseCategories["dining"];
     const IconComponent = category.icon;
     
         return (
@@ -98,7 +98,7 @@ const TransactionItem = ({
 
                 <View style={styles.amountDate}>
                     <Typo fontWeight={"700"}color={colors.rose} >
-                        + $ 1,500
+                        + $ 25
                     </Typo>
                     <Typo size={12} color={colors.neutral400} >
                         jan 12

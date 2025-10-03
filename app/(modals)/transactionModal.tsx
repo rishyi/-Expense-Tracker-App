@@ -26,6 +26,7 @@ import { useAuth } from "@/context/AuthContext";
 import { updateUser } from "@/services/userService";
 import { createdrUpdateWallet, deleteWallet } from "@/services/walletService";
 import { Dropdown } from "react-native-element-dropdown";
+import { transactionTypes } from "@/constants/data";
 
 const TransactionModal = () => {
   const { user, updateUserData } = useAuth();
@@ -37,39 +38,38 @@ const TransactionModal = () => {
     date: new Date(),
     walletId: "",
   });
-
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const oldTransaction: { name: string; id: string } = useLocalSearchParams();
 
-  //  useEffect(() => {
-  //   if(oldTransaction?.id){
-  //       setTransaction({
-  //           name: oldTransaction?.name,
-  //       })
+  // useEffect(() => {
+  //   if (oldTransaction?.id) {
+  //     setTransaction({
+  //       name: oldTransaction?.name,
+  //     });
   //   }
-  //  }, [])
+  // }, []);
 
   const onSubmit = async () => {
-    // let {name } = transaction;
-    // if(!name.trim()){
-    //     Alert.alert("Wallet", "please fill all the blanks");
-    //     return;
+    // let { name } = transition;
+    // if (!name.trim()) {
+    //   Alert.alert("Wallet", "please fill all the blanks");
+    //   return;
     // }
     // const data: WalletType = {
-    //     name,
-    //     uid: user?.uid,
+    //   name,
+    //   uid: user?.uid,
     // };
-    // if(oldTransaction?.id) data.id = oldTransaction?.id
+    // if (oldTransaction?.id) data.id = oldTransaction?.id;
     // setLoading(true);
     // const res = await createdrUpdateWallet(data);
-    // setLoading(false)
+    // setLoading(false);
     // console.log("goo", res);
-    // if(res.success){
-    //     router.back();
-    // }else{
-    //     Alert.alert("Wallet", res.msg)
+    // if (res.success) {
+    //   router.back();
+    // } else {
+    //   Alert.alert("Wallet", res.msg);
     // }
   };
 
@@ -101,30 +101,19 @@ const TransactionModal = () => {
     ]);
   };
 
-  const data = [
-    { label: "Item 1", value: "1" },
-    { label: "Item 2", value: "2" },
-    { label: "Item 3", value: "3" },
-    { label: "Item 4", value: "4" },
-    { label: "Item 5", value: "5" },
-    { label: "Item 6", value: "6" },
-    { label: "Item 7", value: "7" },
-    { label: "Item 8", value: "8" },
+    const data = [
+    { label: 'Item 1', value: '1' },
+    { label: 'Item 2', value: '2' },
+    { label: 'Item 3', value: '3' },
+    { label: 'Item 4', value: '4' },
+    { label: 'Item 5', value: '5' },
+    { label: 'Item 6', value: '6' },
+    { label: 'Item 7', value: '7' },
+    { label: 'Item 8', value: '8' },
   ];
 
-  const renderLabel = () => {
-    if (value || isFocus) {
-      return (
-        <Text style={[styles.label, isFocus && { color: "blue" }]}>
-          Dropdown label
-        </Text>
-      );
-    }
-    return null;
-  };
-
-  const [value, setValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
 
   return (
     <ModalWrapper>
@@ -140,32 +129,58 @@ const TransactionModal = () => {
           contentContainerStyle={styles.form}
           showsVerticalScrollIndicator={false}
         >
+
+          {/* transaction type */}
           <View style={styles.inputContainer}>
             <Typo color={colors.neutral200}>Transaction Type</Typo>
-
+            {/* dropdo */}
             <Dropdown
-              style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
+              style={styles.dropDownContainer}
+              placeholderStyle={styles.dropDownPlaceHolder}
+              selectedTextStyle={styles.dropDownSelectedText}
+              iconStyle={styles.dropDownIcon}
+              data={transactionTypes}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              searchPlaceholder="Search..."
+              value={transaction.type}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={(item) => {
+                setTransaction({ ...transaction, type: item.value });
+              }}
+            />
+          </View>
+
+          {/* Wallet */}
+            {/* <View style={styles.inputContainer}>
+            <Typo color={colors.neutral200}>Wallet</Typo>
+           
+            <Dropdown
+              style={styles.dropDownContainer}
+              placeholderStyle={styles.dropDownPlaceHolder}
+              selectedTextStyle={styles.dropDownSelectedText}
+              iconStyle={styles.dropDownIcon}
               data={data}
               search
               maxHeight={300}
               labelField="label"
               valueField="value"
-              placeholder="Select item"
+              placeholder={!isFocus ? "Select Wallet" : "..."}
               searchPlaceholder="Search..."
-              value={value} // value eka state eken ganna
+              value={value}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={(item) => {
-                setValue(item.value); // important: valueField "value" ekama use wenna one
+                setValue(item.value);
                 setIsFocus(false);
               }}
             />
-            
-          </View>
+          </View> */}
+
+
         </ScrollView>
       </View>
       <View style={styles.footer}>

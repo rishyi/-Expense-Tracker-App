@@ -11,8 +11,10 @@ import ScreenWrapper from '@/components/ScreenWrapper'
 import { verticalScale } from '@/utils/styling'
 import * as Icons from "phosphor-react-native";
 import HomeCard from '@/components/HomeCard'
-import { Transaction } from 'firebase/firestore'
+import { limit, orderBy, Transaction, where } from 'firebase/firestore'
 import TransactionList from '@/components/TransactionList'
+import useFetchData from '@/hooks/useFetchData'
+import { TransactionType } from '@/types'
 
 const Home = () => {
 
