@@ -44,5 +44,6 @@ app-example
 expo-env.d.ts
 # @end expo-cli
 # .gitignore
+
 .expo/
-android/.gradle/
+
